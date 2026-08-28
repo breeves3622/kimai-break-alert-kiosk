@@ -29,15 +29,22 @@ docker compose up -d --build
 docker compose logs -f alert-worker
 ```
 
+### Removing Existing/Conflicting Containers (If Upgrading)
+If you previously had existing containers with fixed names on your Docker host:
+```bash
+docker rm -f kimai-db kimai-kiosk kimai-redis kimai-alert-worker 2>/dev/null || true
+docker compose up -d --build
+```
+
 ---
 
 ## Webhook Integration Details
 
 ### Triggering a Test Break Event
-From within the Docker network (e.g., from the `kimai` container or a temporary container on `kiosk-network`):
+From within the Docker network (e.g., executing `curl` inside the `kimai` container):
 
 ```bash
-docker exec -it kimai-kiosk curl -X POST http://alert-worker:3000/webhook \
+docker compose exec kimai curl -X POST http://alert-worker:3000/webhook \
   -H "Content-Type: application/json" \
   -d '{
     "event": "Break Started",

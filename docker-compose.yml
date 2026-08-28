@@ -3,7 +3,6 @@ version: '3.8'
 services:
   kimai:
     image: lscr.io/linuxserver/kimai:latest
-    container_name: kimai-kiosk
     environment:
       - PUID=1000
       - PGID=1000
@@ -27,7 +26,6 @@ services:
 
   kimai-db:
     image: mariadb:10.11
-    container_name: kimai-db
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_DATABASE=kimai
@@ -41,7 +39,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: kimai-redis
     restart: unless-stopped
     networks:
       - kiosk-network
@@ -50,7 +47,6 @@ services:
     build:
       context: ./alert-worker
       dockerfile: Dockerfile
-    container_name: kimai-alert-worker
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
