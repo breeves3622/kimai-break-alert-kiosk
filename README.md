@@ -6,7 +6,7 @@ A production-ready Docker Compose ecosystem combining [Kimai](https://www.kimai.
 
 ## Ecosystem Architecture
 
-- **`kimai`** (`lscr.io/linuxserver/kimai`): Time-tracking interface accessible on host port `8000`.
+- **`kimai`** (`lscr.io/linuxserver/kimai`): Time-tracking interface accessible on host port `8080` (configurable via `KIMAI_PORT`).
 - **`kimai-db`** (`mariadb:10.11`): Database backend with persistent volume storage (`mariadb_data`).
 - **`redis`** (`redis:7-alpine`): In-memory database used by BullMQ to manage delayed queue timers.
 - **`alert-worker`** (Custom Node.js container): Exposes internal Express webhook endpoint (`/webhook`) to process `"Break Started"` events and queue a 25-minute delayed SMS dispatch job (simulated Twilio integration).
@@ -22,17 +22,24 @@ A production-ready Docker Compose ecosystem combining [Kimai](https://www.kimai.
 
 ### Quick Start
 ```bash
-# Build and start all services in detached mode
+# Build and start all services in detached mode (default web UI port: 8080)
 docker compose up -d --build
+
+# Access Kimai UI in your browser at http://localhost:8080
 
 # View logs from the alert worker service
 docker compose logs -f alert-worker
 ```
 
-### Removing Existing/Conflicting Containers (If Upgrading)
-If you previously had existing containers with fixed names on your Docker host:
+### Customizing the Host Port
+If port `8080` is also in use on your host system, set `KIMAI_PORT` when running compose or create a `.env` file:
+
 ```bash
-docker rm -f kimai-db kimai-kiosk kimai-redis kimai-alert-worker 2>/dev/null || true
+# Option 1: Run inline with custom port (e.g., 9000)
+KIMAI_PORT=9000 docker compose up -d --build
+
+# Option 2: Copy .env.example to .env and adjust KIMAI_PORT
+cp .env.example .env
 docker compose up -d --build
 ```
 

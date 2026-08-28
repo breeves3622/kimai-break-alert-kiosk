@@ -4,20 +4,20 @@ services:
   kimai:
     image: lscr.io/linuxserver/kimai:latest
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
       - DB_HOST=kimai-db
-      - DB_USER=kimai
-      - DB_PASS=kimaipassword
-      - DB_NAME=kimai
+      - DB_USER=${DB_USER:-kimai}
+      - DB_PASS=${DB_PASS:-kimaipassword}
+      - DB_NAME=${DB_NAME:-kimai}
       - APP_ENV=prod
-      - APP_SECRET=change_me_to_a_random_secret_string
+      - APP_SECRET=${APP_SECRET:-change_me_to_a_random_secret_string}
     volumes:
       - kimai_config:/config
       - kimai_data:/data
     ports:
-      - "8000:80"
+      - "${KIMAI_PORT:-8080}:80"
     restart: unless-stopped
     depends_on:
       - kimai-db
@@ -27,10 +27,10 @@ services:
   kimai-db:
     image: mariadb:10.11
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=kimai
-      - MYSQL_USER=kimai
-      - MYSQL_PASSWORD=kimaipassword
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpassword}
+      - MYSQL_DATABASE=${DB_NAME:-kimai}
+      - MYSQL_USER=${DB_USER:-kimai}
+      - MYSQL_PASSWORD=${DB_PASS:-kimaipassword}
     volumes:
       - mariadb_data:/var/lib/mysql
     restart: unless-stopped
