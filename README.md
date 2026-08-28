@@ -15,6 +15,16 @@ A production-ready Docker Compose ecosystem combining [Kimai](https://www.kimai.
 
 ---
 
+## Default Web UI Credentials
+
+The initial admin user is automatically created upon first container startup via environment variables:
+
+- **Username**: `admin` (or the email specified in `ADMINMAIL`)
+- **Email**: `admin@example.com` (configurable via `ADMINMAIL`)
+- **Password**: `superadmin` (configurable via `ADMINPASS`)
+
+---
+
 ## Deployment Instructions
 
 ### Prerequisites
@@ -31,16 +41,18 @@ docker compose up -d --build
 docker compose logs -f alert-worker
 ```
 
-### Customizing the Host Port
-If port `8080` is also in use on your host system, set `KIMAI_PORT` when running compose or create a `.env` file:
+### Environment Customization
+Copy `.env.example` to `.env` to customize host port, admin email/password, and secrets:
 
 ```bash
-# Option 1: Run inline with custom port (e.g., 9000)
-KIMAI_PORT=9000 docker compose up -d --build
-
-# Option 2: Copy .env.example to .env and adjust KIMAI_PORT
 cp .env.example .env
-docker compose up -d --build
+```
+
+In `.env`:
+```env
+KIMAI_PORT=8080
+ADMINMAIL=admin@example.com
+ADMINPASS=MySecurePassword123
 ```
 
 ---

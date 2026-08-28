@@ -7,6 +7,8 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-Etc/UTC}
+      - ADMINMAIL=${ADMINMAIL:-admin@example.com}
+      - ADMINPASS=${ADMINPASS:-superadmin}
       - DATABASE_URL=mysql://${DB_USER:-kimai}:${DB_PASS:-kimaipassword}@kimai-db:3306/${DB_NAME:-kimai}?charset=utf8mb4&serverVersion=10.11.0-MariaDB
       - DB_HOST=kimai-db
       - DB_USER=${DB_USER:-kimai}
