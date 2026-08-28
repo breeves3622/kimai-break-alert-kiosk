@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  kimai:
+    image: lscr.io/linuxserver/kimai:latest
+    container_name: kimai-kiosk
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - DB_HOST=kimai-db
+      - DB_USER=kimai
+      - DB_PASS=kimaipassword
+      - DB_NAME=kimai
+      - APP_ENV=prod
+      - APP_SECRET=change_me_to_a_random_secret_string
+    volumes:
+      - kimai_config:/config
+      - kimai_data:/data
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    depends_on:
+      - kimai-db
+    networks:
+      - kiosk-network
+
+  kimai-db:
+    image: mariadb:10.11
+    container_name: kimai-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=kimai
+      - MYSQL_USER=kimai
+      - MYSQL_PASSWORD=kimaipassword
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - kiosk-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: kimai-redis
+    restart: unless-stopped
+    networks:
+      - kiosk-network
+
+  alert-worker:
+    build:
+      context: ./alert-worker
+      dockerfile: Dockerfile
+    container_name: kimai-alert-worker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PORT=3000
+    restart: unless-stopped
+    depends_on:
+      - redis
+    networks:
+      - kiosk-network
+
+networks:
+  kiosk-network:
+    driver: bridge
+
+volumes:
+  kimai_config:
+  kimai_data:
+  mariadb_data:
